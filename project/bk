@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  # Frontend - React app
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile.react
+    ports:
+      - "80:80"
+    networks:
+      - backend_network
+
+  # Backend - FastAPI app
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://myuser:mypassword@db/mydb
+    networks:
+      - backend_network
+
+  # Database - PostgreSQL
+  db:
+    image: postgres:13
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    driver: bridge

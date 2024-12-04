@@ -1,0 +1,3 @@
+# Dockerfile.wordpress this is use to create a image for wordpress
+FROM wordpress:latest
+EXPOSE 80 

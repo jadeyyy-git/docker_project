@@ -1,0 +1,27 @@
+# Dockerfile.react
+
+# Step 1: Build the React app
+FROM node:18 AS build
+
+WORKDIR /app
+
+# Copy the package.json to install dependencies
+COPY ./frontend/package.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the React app files
+COPY ./frontend ./
+
+# Build the React app
+RUN npm run build
+
+# Step 2: Serve the React app using Nginx
+FROM nginx:alpine
+
+# Copy the built React app from the build stage to the Nginx container
+COPY --from=build /app/build /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,33 @@
+version: '3.1'
+
+services:
+  wordpress: # name of service
+    build: # use to build the image
+      context: ./wordpress  # Directory where Dockerfile.wordpress is located
+      dockerfile: Dockerfile.wordpress  # Custom Dockerfile for WordPress
+    image: wordpress_blog  # Custom image name for your WordPress container
+    restart: always # Restart the container if it stops.
+    ports:
+      - 8080:80 # Expose port 80 of the container to port 8080 on the host for accessing WordPress
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
+    volumes:
+      - wordpress:/var/www/html
+  
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  wordpress:
+  db:
